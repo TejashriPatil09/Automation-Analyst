@@ -1,0 +1,117 @@
+
+### Prerequisites:
+1. **Java Development Kit (JDK)**
+2. **Maven or Gradle** (for dependency management)
+3. **Selenium WebDriver Java bindings**
+4. **WebDriver** (e.g., ChromeDriver)
+
+### Dependencies:
+You'll need to include the Selenium WebDriver dependency in your `pom.xml` if you're using Maven. Here’s an example snippet:
+
+```xml
+<dependency>
+    <groupId>org.seleniumhq.selenium</groupId>
+    <artifactId>selenium-java</artifactId>
+    <version>4.10.0</version> <!-- or the latest version -->
+</dependency>
+```
+
+### Code:
+Here is a sample Java code using Selenium WebDriver that performs the steps described:
+
+```java
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+public class FitPeoAutomation {
+
+    public static void main(String[] args) {
+        // Set the path to the ChromeDriver executable
+        System.setProperty("webdriver.chrome.driver", "path/to/chromedriver");
+
+        // Initialize ChromeDriver
+        ChromeOptions options = new ChromeOptions();
+        WebDriver driver = new ChromeDriver(options);
+
+        try {
+            // Step 1: Navigate to the FitPeo Homepage
+            driver.get("https://www.fitpeo.com");
+
+            // Step 2: Navigate to the Revenue Calculator Page
+            WebDriverWait wait = new WebDriverWait(driver, 10);
+            WebElement revenueCalculatorLink = wait.until(ExpectedConditions.elementToBeClickable(By.linkText("Revenue Calculator")));
+            revenueCalculatorLink.click();
+
+            // Step 3: Scroll Down to the Slider section
+            WebElement sliderSection = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("slider-section-id"))); // Adjust the locator as needed
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", sliderSection);
+
+            // Step 4: Adjust the Slider
+            WebElement slider = driver.findElement(By.id("slider-id")); // Adjust the locator as needed
+            ((JavascriptExecutor) driver).executeScript("arguments[0].setAttribute('value', '820');", slider);
+            WebElement textField = driver.findElement(By.id("slider-text-field-id")); // Adjust the locator as needed
+            String sliderValue = textField.getAttribute("value");
+            assert "820".equals(sliderValue);
+
+            // Step 5: Update the Text Field
+            textField.clear();
+            textField.sendKeys("560");
+            textField.sendKeys(Keys.RETURN);
+
+            // Validate Slider Value
+            WebElement updatedSlider = driver.findElement(By.id("slider-id")); // Adjust the locator as needed
+            String updatedSliderValue = updatedSlider.getAttribute("value");
+            assert "560".equals(updatedSliderValue);
+
+            // Step 6: Select CPT Codes
+            WebElement cpt99091Checkbox = driver.findElement(By.id("cpt-99091-checkbox")); // Adjust the locator as needed
+            WebElement cpt99453Checkbox = driver.findElement(By.id("cpt-99453-checkbox")); // Adjust the locator as needed
+            WebElement cpt99454Checkbox = driver.findElement(By.id("cpt-99454-checkbox")); // Adjust the locator as needed
+            WebElement cpt99474Checkbox = driver.findElement(By.id("cpt-99474-checkbox")); // Adjust the locator as needed
+
+            if (!cpt99091Checkbox.isSelected()) cpt99091Checkbox.click();
+            if (!cpt99453Checkbox.isSelected()) cpt99453Checkbox.click();
+            if (!cpt99454Checkbox.isSelected()) cpt99454Checkbox.click();
+            if (!cpt99474Checkbox.isSelected()) cpt99474Checkbox.click();
+
+            // Step 7: Validate Total Recurring Reimbursement
+            WebElement reimbursementHeader = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("total-reimbursement-header-id"))); // Adjust the locator as needed
+            String reimbursementText = reimbursementHeader.getText();
+            assert reimbursementText.contains("$110700");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // Close the browser
+            driver.quit();
+        }
+    }
+}
+```
+
+### Explanation:
+1. **Setup WebDriver**: Sets up ChromeDriver to use Chrome browser.
+2. **Navigate to FitPeo Homepage**: Opens the FitPeo homepage.
+3. **Navigate to Revenue Calculator Page**: Clicks the link to the Revenue Calculator Page.
+4. **Scroll to Slider Section**: Scrolls down to the slider section using JavaScript Executor.
+5. **Adjust Slider**: Sets the slider’s value to 820 and verifies it.
+6. **Update Text Field**: Updates the text field value and verifies the slider reflects this change.
+7. **Select CPT Codes**: Checks and selects the required CPT codes.
+8. **Validate Reimbursement**: Verifies the total recurring reimbursement amount.
+
+### Running the Script:
+1. **Download and Set Up**: Ensure you have ChromeDriver and Selenium WebDriver dependencies set up in your project.
+2. **Compile and Run**: Compile and run the script from your IDE or command line.
+
+### Documentation:
+In your brief document, explain:
+1. **Setup**: How to set up the project (including dependencies and WebDriver).
+2. **Running the Script**: How to run the script.
+3. **Dependencies**: Any additional dependencies or tools required.
+
